@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Volume e Peso</title>
+<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e3f2fd; /* Azul bem clarinho no fundo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 51, 102, 0.1);
+            width: 100%;
+            max-width: 420px;
+            border-top: 8px solid #003366; /* Detalhe em Azul Marinho */
+        }
+        h2 { 
+            color: #003366; 
+            text-align: center; 
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .input-group { margin-bottom: 1.2rem; }
+        label { 
+            display: block; 
+            margin-bottom: 6px; 
+            color: #003366; 
+            font-weight: bold; 
+            font-size: 0.9rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bcd4e6;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #ffcc00; /* Foco em Amarelo */
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #ffcc00; /* Amarelo Vibrante */
+            color: #003366; /* Texto em Azul para contraste */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover { 
+            background-color: #e6b800; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #resultado {
+            margin-top: 2rem;
+            padding: 1.2rem;
+            background-color: #003366; /* Fundo Azul para o resultado */
+            color: white;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+        .res-item { margin-bottom: 8px; font-size: 1rem; }
+        .res-item span { 
+            font-weight: bold; 
+            color: #ffcc00; /* Destaque do valor em Amarelo */
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Calculadora Industrial</h2>
+    
+    <div class="input-group">
+        <label for="altura">Altura (m)</label>
+        <input type="number" id="altura" step="0.01">
+    </div>
+
+    <div class="input-group">
+        <label for="largura">Largura (m)</label>
+        <input type="number" id="largura" step="0.01">
+    </div>
+
+    <div class="input-group">
+        <label for="profundidade">Profundidade (m)</label>
+        <input type="number" id="profundidade" step="0.01">
+    </div>
+
+    <div class="input-group">
+        <label for="material">Material (Fator)</label>
+        <select id="material">
+            <option value="300">Vagem</option>
+            <option value="150">Palha</option>
+            <option value="600">Grão</option>
+        </select>
+    </div>
+
+    <button onclick="calcular()">Calcular Agora</button>
+
+    <div id="resultado">
+        <div class="res-item">Volume Total: <span id="resVolume">0</span> m³</div>
+        <div class="res-item">Peso Final: <span id="resPeso">0</span> kg</div>
+    </div>
+</div>
+
+<script>
+    function calcular(){
+        const h = parseFloat(document.getElementById('altura').value);
+        const l = parseFloat(document.getElementById('largura').value);
+        const p = parseFloat(document.getElementById('profundidade').value);
+        const fatorMaterial = parseFloat(document.getElementById('material').value);
+
+        // Correção de erro de sintaxe: isNanN -> isNaN
+        if (isNaN(h) || isNaN(l) || isNaN(p)) {
+            alert("Por favor, preencha todos os campos numéricos.");
+            return;
+        }
+
+        const volCaixa = h * l * p;
+        const volCone = volCaixa / 4;
+        const volTotal = volCaixa + volCone;
+        const pesoFinal = volTotal * fatorMaterial;
+
+        document.getElementById('resVolume').innerText = volTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2});
+        document.getElementById('resPeso').innerText = pesoFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2});
+        document.getElementById('resultado').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
