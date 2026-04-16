@@ -4,43 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Volume e Peso</title>
-<style>
+    <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e3f2fd; /* Azul bem clarinho no fundo */
+            background-color: #e3f2fd;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .container {
             background: #ffffff;
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 51, 102, 0.1);
             width: 100%;
-            max-width: 420px;
-            border-top: 8px solid #003366; /* Detalhe em Azul Marinho */
+            max-width: 500px;
+            border-top: 8px solid #003366;
+        }
+        
+        /* Cabeçalho com Logo à Esquerda */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+        .logo {
+            max-width: 100px; /* Ajustado para caber ao lado do texto */
+            height: auto;
+        }
+        .title-group {
+            text-align: left;
         }
         h2 { 
             color: #003366; 
-            text-align: center; 
-            margin-bottom: 1.5rem;
+            margin: 0;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-size: 1.2rem;
+            line-height: 1.2;
         }
-        .input-group { margin-bottom: 1.2rem; }
+
+        h3 {
+            color: #003366;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #bcd4e6;
+            padding-bottom: 5px;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+        }
+        .input-group { flex: 1; }
+        
         label { 
             display: block; 
             margin-bottom: 6px; 
             color: #003366; 
             font-weight: bold; 
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #bcd4e6;
             border-radius: 8px;
             box-sizing: border-box;
@@ -48,13 +81,26 @@
             transition: border-color 0.3s;
         }
         input:focus {
-            border-color: #ffcc00; /* Foco em Amarelo */
+            border-color: #ffcc00;
         }
+        
+        .sub-resultado {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1rem;
+            text-align: right;
+            font-style: italic;
+        }
+        .sub-resultado span {
+            color: #003366;
+            font-weight: bold;
+        }
+
         button {
             width: 100%;
             padding: 14px;
-            background-color: #ffcc00; /* Amarelo Vibrante */
-            color: #003366; /* Texto em Azul para contraste */
+            background-color: #ffcc00;
+            color: #003366;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -66,12 +112,11 @@
         button:hover { 
             background-color: #e6b800; 
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         #resultado {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding: 1.2rem;
-            background-color: #003366; /* Fundo Azul para o resultado */
+            background-color: #003366;
             color: white;
             border-radius: 10px;
             display: none;
@@ -80,7 +125,7 @@
         .res-item { margin-bottom: 8px; font-size: 1rem; }
         .res-item span { 
             font-weight: bold; 
-            color: #ffcc00; /* Destaque do valor em Amarelo */
+            color: #ffcc00;
             font-size: 1.2rem;
         }
     </style>
@@ -88,60 +133,103 @@
 <body>
 
 <div class="container">
-    <h2>Calculadora Industrial</h2>
+    <div class="header-container">
+        <img src="https://i.imgur.com/sbwLluH.png" alt="Logo Tecponfer" class="logo">
+        <div class="title-group">
+            <h2>Calculadora de Silo</h2>
+            <h2>Tecponfer</h2>
+        </div>
+    </div>
     
-    <div class="input-group">
-        <label for="altura">Altura (m)</label>
-        <input type="number" id="altura" step="0.01">
+    <h3>Dimensões do Silo</h3>
+    <div class="row">
+        <div class="input-group">
+            <label for="altura">Altura (m)</label>
+            <input type="number" id="altura" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
+        <div class="input-group">
+            <label for="largura">Largura (m)</label>
+            <input type="number" id="largura" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
+        <div class="input-group">
+            <label for="profundidade">Profundidade (m)</label>
+            <input type="number" id="profundidade" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
     </div>
+    <div class="sub-resultado">Vol. Silo: <span id="parcialCaixa">0,00</span> m³</div>
+
+    <h3>Dimensões do Cone</h3>
+    <div class="row">
+        <div class="input-group">
+            <label for="altura2">Altura (m)</label>
+            <input type="number" id="altura2" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
+        <div class="input-group">
+            <label for="largura2">Largura (m)</label>
+            <input type="number" id="largura2" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
+        <div class="input-group">
+            <label for="profundidade2">Profundidade (m)</label>
+            <input type="number" id="profundidade2" step="0.01" placeholder="0,00" oninput="calcularParcial()">
+        </div>
+    </div>
+    <div class="sub-resultado">Vol. Cone: <span id="parcialCone">0,00</span> m³</div>
 
     <div class="input-group">
-        <label for="largura">Largura (m)</label>
-        <input type="number" id="largura" step="0.01">
-    </div>
-
-    <div class="input-group">
-        <label for="profundidade">Profundidade (m)</label>
-        <input type="number" id="profundidade" step="0.01">
-    </div>
-
-    <div class="input-group">
-        <label for="material">Material (Fator)</label>
+        <label for="material">Material (Fator de Densidade)</label>
         <select id="material">
-            <option value="300">Vagem</option>
-            <option value="150">Palha</option>
-            <option value="600">Grão</option>
+            <option value="300">Vagem (300 kg/m³)</option>
+            <option value="150">Palha (150 kg/m³)</option>
+            <option value="600">Grão (600 kg/m³)</option>
         </select>
     </div>
 
-    <button onclick="calcular()">Calcular Agora</button>
+    <button onclick="calcular()">Calcular</button>
 
     <div id="resultado">
         <div class="res-item">Volume Total: <span id="resVolume">0</span> m³</div>
-        <div class="res-item">Peso Final: <span id="resPeso">0</span> kg</div>
+        <div class="res-item">Capacidade Final: <span id="resPeso">0</span> kg</div>
     </div>
 </div>
 
 <script>
+    function calcularParcial() {
+        const h = parseFloat(document.getElementById('altura').value) || 0;
+        const l = parseFloat(document.getElementById('largura').value) || 0;
+        const p = parseFloat(document.getElementById('profundidade').value) || 0;
+
+        const hh = parseFloat(document.getElementById('altura2').value) || 0;
+        const ll = parseFloat(document.getElementById('largura2').value) || 0;
+        const pp = parseFloat(document.getElementById('profundidade2').value) || 0;
+
+        const volCaixa = h * l * p;
+        const volCone = (hh * ll * pp) / 4;
+
+        document.getElementById('parcialCaixa').innerText = volCaixa.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('parcialCone').innerText = volCone.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+
     function calcular(){
         const h = parseFloat(document.getElementById('altura').value);
         const l = parseFloat(document.getElementById('largura').value);
         const p = parseFloat(document.getElementById('profundidade').value);
+        const hh = parseFloat(document.getElementById('altura2').value);
+        const ll = parseFloat(document.getElementById('largura2').value);
+        const pp = parseFloat(document.getElementById('profundidade2').value);	
         const fatorMaterial = parseFloat(document.getElementById('material').value);
 
-        // Correção de erro de sintaxe: isNanN -> isNaN
-        if (isNaN(h) || isNaN(l) || isNaN(p)) {
-            alert("Por favor, preencha todos os campos numéricos.");
+        if (isNaN(h) || isNaN(l) || isNaN(p) || isNaN(hh) || isNaN(ll) || isNaN(pp)) {
+            alert("Por favor, preencha todos os campos das dimensões para o cálculo final.");
             return;
         }
 
         const volCaixa = h * l * p;
-        const volCone = volCaixa / 4;
+        const volCone = (hh * ll * pp) / 4;
         const volTotal = volCaixa + volCone;
         const pesoFinal = volTotal * fatorMaterial;
 
-        document.getElementById('resVolume').innerText = volTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2});
-        document.getElementById('resPeso').innerText = pesoFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2});
+        document.getElementById('resVolume').innerText = volTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resPeso').innerText = pesoFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2});
         document.getElementById('resultado').style.display = 'block';
     }
 </script>
